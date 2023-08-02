@@ -35,9 +35,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
-        btnInitPort = (Button) findViewById(R.id.InitPort);
-        btnClosePort = (Button) findViewById(R.id.ClosePort);
-        tvViewport = (TextView) findViewById(R.id.Viewport);
+        btnInitPort = findViewById(R.id.InitPort);
+        btnClosePort = findViewById(R.id.ClosePort);
+        tvViewport = findViewById(R.id.Viewport);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_USB_PREMISSION);
