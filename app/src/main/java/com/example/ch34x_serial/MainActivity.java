@@ -25,9 +25,9 @@ public class MainActivity extends AppCompatActivity {
     UsbManager usbManager;
     UsbSerialDevice serialPort;
     UsbDeviceConnection usbConnection;
-    Button InitPort;
-    Button ClosePort;
-    TextView Viewport;
+    Button btnInitPort;
+    Button btnClosePort;
+    TextView tvViewport;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +35,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
-        InitPort = (Button) findViewById(R.id.InitPort);
-        ClosePort = (Button) findViewById(R.id.ClosePort);
-        Viewport = (TextView) findViewById(R.id.Viewport);
+        btnInitPort = (Button) findViewById(R.id.InitPort);
+        btnClosePort = (Button) findViewById(R.id.ClosePort);
+        tvViewport = (TextView) findViewById(R.id.Viewport);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_USB_PREMISSION);
@@ -74,9 +74,9 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(context,"БЛОКИРОВКА",Toast.LENGTH_SHORT).show();
                 }
             } else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)){
-                onClickConnect(InitPort);
+                onClickConnect(btnInitPort);
             } else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_DETACHED)){
-                onClickDisconnect(ClosePort);
+                onClickDisconnect(btnClosePort);
             }
         }
     };
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceivedData(byte[] bytes) {
             String data = new String(bytes, StandardCharsets.UTF_8);
-            Viewport.setText(data);
+            tvViewport.setText(data);
         }
     };
 
