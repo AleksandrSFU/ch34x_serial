@@ -15,9 +15,10 @@ import android.os.Bundle;
 import android.widget.Toast;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
-import java.nio.charset.StandardCharsets;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends AppCompatActivity {
     public final String ACTION_USB_PREMISSION = "com.hariharan.arduinousb.USB_PREMISSION";
@@ -26,8 +27,9 @@ public class MainActivity extends AppCompatActivity {
     UsbSerialDevice serialPort;
     UsbDeviceConnection usbConnection;
     Button btnInitPort;
-    Button btnClosePort;
-    TextView tvViewport;
+    Button btnClosePort;  TextView tvViewport;
+    private int limit = 1023;
+    ByteBuffer buffer = ByteBuffer.allocate(limit);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,13 +84,28 @@ public class MainActivity extends AppCompatActivity {
     };
 
     UsbSerialInterface.UsbReadCallback callback = new UsbSerialInterface.UsbReadCallback() {
+
         @Override
         public void onReceivedData(byte[] bytes) {
-            String data = new String(bytes, StandardCharsets.UTF_8);
-            tvViewport.setText(data);
+
+            // String data = new String(bytes, StandardCharsets.UTF_8); // вывод строки из uart
+            // tvViewport.setText(data);                                // вывод строки на экран
+
+            StringBuffer str = new StringBuffer(limit);
+            str.delete(0,limit);
+
+            for (byte i : bytes) {
+                int decimal = (int)i & 0XFF;
+                if (decimal != 0XC0) {                           // начал/конец строки
+                    str.append(Integer.toHexString(decimal));
+                    if (decimal == 0XFF) {str.delete(0, limit);} // остаток 193 до 255 байты убраны.
+                } else {
+                        tvViewport.setText(str.toString());
+                        str.delete(0, limit);
+                }
+            }
         }
     };
-
 
     public void onClickConnect (View View) {
         HashMap<String, UsbDevice> usbDevices = usbManager.getDeviceList();
